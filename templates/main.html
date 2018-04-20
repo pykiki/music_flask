@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Music Flask - Web downloader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/css/bootstrap.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <p>
+      <h1>Welcome to <b>Music Flask</b>,</h1>
+      <br/>
+      <h5>
+      <p class>
+        <i>a WEB application which aims to <u>make downloading youtube music easier</u> !</i>
+      </p>
+      </h5>
+    </p>
+    <div class="container">
+      <br>
+      <form action="" method="post">
+        <input type="text" placeholder="URL" name="URL" value="{{ request.form.URL }}">
+        <input class="btn btn-default" type="submit" value="Download">
+      </form>
+      <br/>
+      <input class="btn btn-default" style="margin-left: 20px;" type="button" value="Downloaded musics" onclick="window.location.href='/music'" />
+
+    </div>
+  </body>
+</html>

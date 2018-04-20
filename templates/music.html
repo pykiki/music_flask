@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Music Flask - Web downloader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static/css/bootstrap.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <h1>Music list</h1>
+    <br/>
+    <div class="container">
+      {% for music in musics %}
+        <a href="/music/{{ music }}" > {{ music }} </a>
+        <br/>
+      {% endfor %}
+    </div>
+  </body>
+</html>
