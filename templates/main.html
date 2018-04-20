@@ -1,29 +1,44 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Music Flask - Web downloader</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/css/bootstrap.css" rel="stylesheet" media="screen">
-  </head>
-  <body>
-    <p>
-      <h1>Welcome to <b>Music Flask</b>,</h1>
-      <br/>
-      <h5>
-      <p class>
-        <i>a WEB application which aims to <u>make downloading youtube music easier</u> !</i>
-      </p>
-      </h5>
-    </p>
+{% extends "base.html" %}
+{% block title %}Download{% endblock %}
+{% block content %}
     <div class="container">
+      <div style='text-align: center;'>
+        <h1>Welcome to <b>Music Flask</b>,</h1>
+        <br/>
+        <h5>
+        <p class>
+          <i>a WEB application which aims to <u>make downloading youtube music easier</u> !</i>
+        </p>
+        </h5>
+      </div>
       <br>
-      <form action="" method="post">
-        <input type="text" placeholder="URL" name="URL" value="{{ request.form.URL }}">
-        <input class="btn btn-default" type="submit" value="Download">
+      <form action="" method="post" role="form">
+        <div class="form-group">
+          You can download multiple files by separating your URL by a [space]
+          <br/>
+          <br/>
+          <label for="name">URLs</label>
+          <input required="required" type="url" placeholder="https://www.youtube.com/watch?video1 https://www.youtube.com/watch?video2" name="URL" class="form-control" id="URL" value="{{ request.form.URL }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        </div>
+        <button type="submit" class="btn btn-success">Download</button>
       </form>
       <br/>
-      <input class="btn btn-default" style="margin-left: 20px;" type="button" value="Downloaded musics" onclick="window.location.href='/music'" />
-
+      <br/>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for category, message in messages %}
+              {% if category == "info" %}
+                <li style="color: green;font-weight: bold;" class="{{ category }}">{{ message }}</li>
+              {% else %}
+                <li style="color: red;font-weight: bold;" class="{{ category }}">{{ message }}</li>
+              {% endif %}
+            {% endfor %}
+              </div>
+            </ul>
+        {% endif %}
+      {% endwith %}
+      <br/>
     </div>
-  </body>
-</html>
+{% endblock %}

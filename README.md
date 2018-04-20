@@ -11,8 +11,10 @@ Based on the Flask framework, it is entirely developped in Pyhton3.
 <p>
   Python3
   pip3
-  Python Flask 
+  Flask
+  flask_wtf
   youtube_dl
+  wtforms
 </p>
 
 ### Status
@@ -21,25 +23,26 @@ Based on the Flask framework, it is entirely developped in Pyhton3.
 
 ### TODO
 
-- Mettre en place un moyen de conserver les URL associé au nom du fichier telecharger pour ne pas re faire le telechargement si le fichier existe dans data/
-- mettre en place les rechargement auto
-- les bouttons de navigation si necessaire
-- ajouter l'appel a l'api musicbrainz (https://musicbrainz.org/) et renommer en fonction + ajouter les tag dans le fichier
-- ajouter les balise audio pour l'ecoute en streaming
-- ajouter la possibilité de supprimer les music
-- ameliorer la gestion de la longueure du champs pour l'URL
-- ajouter la possibilité de passer plusieurs URL
-- mettre en place le telechargement en parallèle (avec async-io)
-- ajouter des information de progression
-- remplir la classe des logger
-- ajouter la gestion de la taille disponible dans le repertoire data, ajouter l'affichage d'une alerte si espace faible.
+- Add TLS support
+- Improve music files list design
+- Add audio balise to stream online
+- Add a way to delete musics
+- Improve and add more flash information
+- Find a way to add a progress-bar
+- Add youtube-dl progessinon informations too
+- Add a database simplistic system to store URL:file_name downloaded
+- Avoid downloading of an previously downloaded file still present in 'data'
+- A an API call to [musicbrainz](https://musicbrainz.org/) to retrieve tag informations and music names + update file with it.
+- Change download mechanism to be able to download in a async manner.[async-io](https://docs.python.org/3/library/asyncio.html)
+- Fill up the logger class
+- Add a check for the local disk available space before download. Print a warning icon when disk space is low.
 
 ### Quickstart
 
 Create a [Python virtual environnement](https://virtualenv.pypa.io/en/stable/ "Python virtualenv") and then install Flask.
 
 ```bash
-$ pip install Flask
+$ pip install Flask wtforms flask_wtf
 ```
 
 Install [youtube_dl](https://github.com/rg3/youtube-dl/blob/master/README.md#readme "Documentation youtube_dl")

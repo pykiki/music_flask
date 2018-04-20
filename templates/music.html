@@ -1,18 +1,27 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Music Flask - Web downloader</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="static/css/bootstrap.css" rel="stylesheet" media="screen">
-  </head>
-  <body>
-    <h1>Music list</h1>
-    <br/>
-    <div class="container">
+{% extends "base.html" %}
+{% block title %}Music List{% endblock %}
+{% block content %}
+    <div style='text-align: center;' class="container">
+      <h1><b>Music list</b></h1>
+      <br/>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for category, message in messages %}
+              {% if category == "info" %}
+                <li style="color: green;font-weight: bold;" class="{{ category }}">{{ message }}</li>
+              {% else %}
+                <li style="color: red;font-weight: bold;" class="{{ category }}">{{ message }}</li>
+              {% endif %}
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      <br/>
       {% for music in musics %}
         <a href="/music/{{ music }}" > {{ music }} </a>
         <br/>
       {% endfor %}
+      <br/>
     </div>
-  </body>
-</html>
+{% endblock %}

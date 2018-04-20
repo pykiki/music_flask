@@ -29,6 +29,12 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import send_from_directory
+from flask import url_for
+from flask import redirect
+from flask import flash
+from flask_wtf.csrf import CSRFProtect
+
+from forms import RequiredField
 
 __author__ = "Alain Maibach"
 __status__ = "Developement"
@@ -37,22 +43,30 @@ class MyLogger(object):
     """
       Wiiz
     """
+    def __init__(self):
+        self.__error = 0
+        self.__warning = 0
+        self.__debug = 0
+
     def debug(self, msg):
         """
           Wizz
         """
-        pass
+        self.__debug = 1
+        print(msg)
 
     def warning(self, msg):
         """
           Wizz
         """
-        pass
+        self.__warning = 1
+        print(msg)
 
     def error(self, msg):
         """
           Wizz
         """
+        self.__error = 1
         print(msg)
 
 def my_hook(_d):
@@ -67,9 +81,9 @@ def show_main_page():
     """
       This function render the main page after a sucessfull log in.
     """
-    return render_template('main.html')
+    return render_template('main.html', pagename='download')
 
-def youtube_download(url):
+def youtube_download(urls):
     """
       This function will handles authentication mecanisme
     """
@@ -83,6 +97,7 @@ def youtube_download(url):
         'retries': 10,
         'fragment-retries': 10,
         'continue': True,
+        'no-overwrites': True,
         'no-part': True,
         'no-cache-dir': True,
         'rm-cache-dir': True,
@@ -101,21 +116,53 @@ def youtube_download(url):
     }
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        #for url in urls:
+        #    try:
+        #        ydl.download([url])
+        try:
+            ydl.download(urls)
+        except youtube_dl.DownloadError as err:
+            flash('Failed to download: {}'.format(str(err)), 'error')
+            return redirect(url_for('main_page'))
+        except youtube_dl.SameFileError as err:
+            flash('Same file already downloaded: {}'.format(str(err)), 'error')
+            return redirect(url_for('main_page'))
+        except youtube_dl.utils.ExtractorError as err:
+            flash('Extracting error: {}'.format(str(err)), 'error')
+            return redirect(url_for('main_page'))
+        except youtube_dl.utils.UnavailableVideoError as err:
+            flash('Video not available on requested url: {}'.format(str(err)), 'error')
+            return redirect(url_for('main_page'))
 
-    return "OK"
+    str_urls = "\n".join(urls)
+    flash(r'{} Downloaded'.format(str_urls), 'info')
+    return redirect(url_for('list_music'))
 
+# Instanciate flask
 APP = Flask(__name__)
+
+# Protect flask app with CSRF giving secret keys
+APP_CSRF = CSRFProtect(APP)
+APP.config.update(dict(
+    SECRET_KEY="powerful secretkey",
+    WTF_CSRF_SECRET_KEY="a csrf secret key"
+))
 
 @APP.route('/', methods=['GET', 'POST'])
 def main_page():
     """
-      Login func which serves the main page
+      This, serves the main page
     """
-
     if request.method == 'POST':
-        url = request.form['URL']
-        return youtube_download(url)
+        form = RequiredField()
+        if form.validate_on_submit():
+            #urls = []
+            #urls.append(request.form['URL'])
+            urls = request.form['URL'].split(' ')
+            return youtube_download(urls)
+
+        flash('Please fill the URL before submitting', 'warning')
+        return redirect(url_for('main_page'))
 
     if request.method == 'GET':
         return show_main_page()
@@ -140,7 +187,7 @@ def list_music():
             if not filename.endswith('.mp3'):
                 continue
             musics.append(filename)
-    return render_template('music.html', musics=musics)
+    return render_template('music.html', musics=musics, pagename='musics')
 
 @APP.route('/music/<path:filename>', methods=['GET', 'POST'])
 def download_file(filename):
