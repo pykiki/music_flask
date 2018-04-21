@@ -40,6 +40,8 @@ Based on the Flask framework, it is entirely developped in Pyhton3.
 
 ### Docker
 
+#### Build it
+
 You can build the docker image with the bash script included:
 
 ```bash
@@ -47,17 +49,28 @@ $ cd Docker/
 $ bash -c ./build-image.sh
 ```
 
-To start the container, you must run it with user flask:
+#### Start it
 
-```bash
-$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask --rm music_flask:latest
-```
+You must run it with user flask:
 
 <aside class="notice">
   Please pay attention to the flag <b>--rm</b>
 </aside>
 
-To manage it you can:
+```bash
+$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask --rm music_flask:latest
+```
+
+If you want to manage the downloaded files on disk, you can mount the data directory into a volume
+with -v option:
+
+```bash
+$ mkdir ./musics
+$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask -v ./musics:/home/flask/music_flask/data --rm music_flask:latest
+```
+
+#### Manage it
+
   - show logs
   - attach to it
   - stop it
@@ -67,6 +80,7 @@ $ docker logs -f music_flask
 $ docker exec -it music_flask sh
 $ docker stop music_flask
 ```
+
 
 ### Quickstart
 
