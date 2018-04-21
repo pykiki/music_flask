@@ -40,6 +40,7 @@ PYTHON3 = sys.version_info.major == 3
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
+APP_VERSION = 'v1.1.2'
 
 class Core():
     ''' Core class which contains music_flask engine functions '''
@@ -55,6 +56,7 @@ class Core():
 
         self.__main_page_name = 'download'
         self.__main_html_file = 'main.html'
+        self.__app_version = APP_VERSION
 
         self.__code = False
         self.__interrupt = False
@@ -88,7 +90,7 @@ class Core():
         """
           This function render the main page after a sucessfull log in.
         """
-        return render_template(self.__main_html_file, pagename=self.__main_page_name)
+        return render_template(self.__main_html_file, pagename=self.__main_page_name, app_version=self.__app_version)
 
     def youtube_download(self, urls):
         """
@@ -163,7 +165,12 @@ class Core():
         ''' Wiiz '''
         return self.__data_dir
 
-    data_dir = property(get_datadir, None, None, "Return data directory")
+    def get_app_version(self):
+        ''' Wiiz '''
+        return self.__app_version
+
+    data_dir = property(get_datadir, None, None, "Return the data directory path")
+    app_version = property(get_app_version, None, None, "Return the application version")
 
 if __name__ == '__main__':
     pass

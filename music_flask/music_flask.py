@@ -95,7 +95,7 @@ if __name__ == '__main__':
         """
 
         musics = MUSIC_CORE.list_mp3()
-        return render_template('music.html', musics=musics, pagename='musics')
+        return render_template('music.html', musics=musics, pagename='musics', app_version=MUSIC_CORE.app_version)
 
     @APP.route('/music/<path:filename>', methods=['GET', 'POST'])
     def download_file(filename):
