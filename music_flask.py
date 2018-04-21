@@ -201,4 +201,4 @@ def download_file(filename):
     return response
 
 if __name__ == '__main__':
-    APP.run(debug=True, host='127.0.0.1', port=8080)
+    APP.run(debug=True, host='0.0.0.0', port=1080)
