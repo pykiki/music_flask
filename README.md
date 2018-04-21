@@ -24,6 +24,7 @@ Based on the Flask framework, it is entirely developped in Python3.
 
 ### TODO
 
+- Add a cli arguments parser
 - Improve music files list design
   - Add audio balise to stream online
   - Add a way to delete musics
@@ -80,7 +81,6 @@ $ docker exec -it music_flask sh
 $ docker stop music_flask
 ```
 
-
 ### Quickstart
 
 Create a [Python virtual environnement](https://virtualenv.pypa.io/en/stable/ "Python virtualenv")
@@ -99,15 +99,15 @@ $ python3 music_flask/music_flask.py
 
 ### Parameters
 
-TLS: Enable or disable HTTPS support, <b>default value False</b>
-TLS_CERTIFICATE: Absolute path to a PEM TLS certificate file, <b>default value ''</b>
-TLS_KEY: Absolute path to a PEM TLS private key file, <b>default value ''</b>
-PORT: Listening port for the WEB interface, <b>default value 1080</b>
-LISTEN: Listening IP address for the WEB interface, <b>default value '0.0.0.0'</b>
-DEBUG: Enable flask debug, <b>default value False</b>
-CSRF_KEY: CSRF key used by Flask to secure the HTTP(S) exchanges, <b>default value "powerful secretkey"</b>
-CSRF_FORM_TOKEN: Secret token set in the main page formulary to be send to Flask engine, <b>default value "a csrf secret key"</b>
-DATA_DIRECTORY: MP3 download destination directory if no value are set, the data will be put in <i>[the music_flask project's directory/data]</i>, <b>default value False</b>
+- TLS: Enable or disable HTTPS support, <b>default value False</b>
+- TLS_CERTIFICATE: Absolute path to a PEM TLS certificate file, <b>default value ''</b>
+- TLS_KEY: Absolute path to a PEM TLS private key file, <b>default value ''</b>
+- PORT: Listening port for the WEB interface, <b>default value 1080</b>
+- LISTEN: Listening IP address for the WEB interface, <b>default value '0.0.0.0'</b>
+- DEBUG: Enable flask debug, <b>default value False</b>
+- CSRF_KEY: CSRF key used by Flask to secure the HTTP(S) exchanges, <b>default value "powerful secretkey"</b>
+- CSRF_FORM_TOKEN: Secret token set in the main page formulary to be send to Flask engine, <b>default value "a csrf secret key"</b>
+- DATA_DIRECTORY: MP3 download destination directory if no value are set, the data will be put in <i>[the music_flask project's directory/data]</i>, <b>default value False</b>
 
 ### Informations
 
