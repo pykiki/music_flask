@@ -145,16 +145,18 @@ class Core():
         return redirect(url_for('list_music'))
 
 
-    def list_files(self):
+    def list_mp3(self):
         ''' Wiiz '''
-        files = []
+        mp3 = []
         directories = []
         main_paths = []
         for root, dirs, files in os.walk(self.__data_dir):
             main_paths.append(root)
             directories.append(dirs)
             for filename in [name for name in files]:
-                files.append(filename)
+                if not filename.endswith('.mp3'):
+                    continue
+                mp3.append(filename)
         return files
 
     def get_datadir(self):

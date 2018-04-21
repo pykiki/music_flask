@@ -85,12 +85,7 @@ def list_music():
     wizz
     """
 
-    musics = []
-    files = MUSIC_CORE.list_files()
-    for filename in files:
-        if not filename.endswith('.mp3'):
-            continue
-        musics.append(filename)
+    musics = MUSIC_CORE.list_mp3()
     return render_template('music.html', musics=musics, pagename='musics')
 
 @APP.route('/music/<path:filename>', methods=['GET', 'POST'])

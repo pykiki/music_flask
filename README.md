@@ -66,7 +66,7 @@ with -v option:
 
 ```bash
 $ mkdir $(pwd)/musics
-$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask -v $(pwd)/musics:/home/flask/music_flask/data --rm music_flask:latest
+$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask -v $(pwd)/musics:/home/flask/music_flask/music_flask/data --rm music_flask:latest
 ```
 
 #### Manage it
