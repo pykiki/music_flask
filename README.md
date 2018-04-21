@@ -99,15 +99,18 @@ $ python3 music_flask/music_flask.py
 
 ### Parameters
 
-- TLS: Enable or disable HTTPS support, <b>default value False</b>
-- TLS_CERTIFICATE: Absolute path to a PEM TLS certificate file, <b>default value ''</b>
-- TLS_KEY: Absolute path to a PEM TLS private key file, <b>default value ''</b>
-- PORT: Listening port for the WEB interface, <b>default value 1080</b>
-- LISTEN: Listening IP address for the WEB interface, <b>default value '0.0.0.0'</b>
-- DEBUG: Enable flask debug, <b>default value False</b>
-- CSRF_KEY: CSRF key used by Flask to secure the HTTP(S) exchanges, <b>default value "powerful secretkey"</b>
-- CSRF_FORM_TOKEN: Secret token set in the main page formulary to be send to Flask engine, <b>default value "a csrf secret key"</b>
-- DATA_DIRECTORY: MP3 download destination directory if no value are set, the data will be put in <i>[the music_flask project's directory/data]</i>, <b>default value False</b>
+|   Variable Name   |                                              Description  	                                                                      |      Default value 	         |
+|:-----------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:----------------------------:|
+| TLS 	            |   Enable or disable HTTPS support   	                                                                                            |           False 	           |
+| TLS_CERTIFICATE 	|   Absolute path to a PEM TLS certificate file                                                                                    	|           ''       	         |
+| TLS_KEY	          |   Absolute path to a PEM TLS private key file	                                                                                    |           ''      	         |
+| PORT	            |   Listening port for the WEB interface                                                                                            |           1080     	         |
+| LISTEN	          |   Listening IP address for the WEB interface                                                                                      |         '0.0.0.0'  	         |
+| DEBUG	            |   Enable flask debug                                                                                                              |           False    	         |
+| CSRF_KEY	        |   CSRF key used by Flask to secure the HTTP(S) exchanges                                                                          |      "powerful secretkey" 	 |
+| CSRF_FORM_TOKEN	  |   Secret token set in the main page formulary to be send to Flask engine                                                          |      "a csrf secret key"     |
+| DATA_DIRECTORY	  |   MP3 download destination directory if no value are set, the data will be put in <i>[the music_flask project's directory/data]   |           False      	       |
+
 
 ### Informations
 
