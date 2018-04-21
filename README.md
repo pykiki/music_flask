@@ -13,8 +13,9 @@ Based on the Flask framework, it is entirely developped in Pyhton3.
   pip3
   Flask
   flask_wtf
-  youtube_dl
   wtforms
+  youtube_dl
+  ffmpeg
 </p>
 
 ### Status
@@ -36,6 +37,34 @@ Based on the Flask framework, it is entirely developped in Pyhton3.
 - Change download mechanism to be able to download in a async manner.[async-io](https://docs.python.org/3/library/asyncio.html)
 - Fill up the logger class
 - Add a check for the local disk available space before download. Print a warning icon when disk space is low.
+
+### Docker
+
+You can build the docker image with the bash script included:
+
+```bash
+$ cd Docker/
+$ bash -c ./build-image.sh
+```
+
+To start the container, you must run it with user flask:
+
+```bash
+$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask --rm music_flask:latest
+```
+
+Please pay attention to the flag <b>--rm</b>
+
+To manage it you can:
+  - show logs
+  - attach to it
+  - stop it
+
+```bash
+$ docker logs -f music_flask
+$ docker exec -it music_flask sh
+$ docker stop music_flask
+```
 
 ### Quickstart
 
