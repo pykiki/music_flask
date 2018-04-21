@@ -24,16 +24,15 @@ Based on the Flask framework, it is entirely developped in Python3.
 
 ### TODO
 
-- Add TLS support
 - Improve music files list design
-- Add audio balise to stream online
-- Add a way to delete musics
+  - Add audio balise to stream online
+  - Add a way to delete musics
 - Improve and add more flash information
 - Find a way to add a progress-bar
-- Add youtube-dl progessinon informations too
+- Add youtube-dl progession informations too
 - Add a database simplistic system to store URL:file_name downloaded
-- Avoid downloading of an previously downloaded file still present in 'data'
-- A an API call to [musicbrainz](https://musicbrainz.org/) to retrieve tag informations and music names + update file with it.
+- Avoid downloading of a previously downloaded file still present in 'data'
+- Add a API call to [musicbrainz](https://musicbrainz.org/) to retrieve tag informations and music names + update file with it.
 - Change download mechanism to be able to download in a async manner.[async-io](https://docs.python.org/3/library/asyncio.html)
 - Fill up the logger class
 - Add a check for the local disk available space before download. Print a warning icon when disk space is low.
@@ -97,6 +96,18 @@ Now run the application:
 ```bash
 $ python3 music_flask/music_flask.py
 ```
+
+### Parameters
+
+TLS: Enable or disable HTTPS support, <b>default value False</b>
+TLS_CERTIFICATE: Absolute path to a PEM TLS certificate file, <b>default value ''</b>
+TLS_KEY: Absolute path to a PEM TLS private key file, <b>default value ''</b>
+PORT: Listening port for the WEB interface, <b>default value 1080</b>
+LISTEN: Listening IP address for the WEB interface, <b>default value '0.0.0.0'</b>
+DEBUG: Enable flask debug, <b>default value False</b>
+CSRF_KEY: CSRF key used by Flask to secure the HTTP(S) exchanges, <b>default value "powerful secretkey"</b>
+CSRF_FORM_TOKEN: Secret token set in the main page formulary to be send to Flask engine, <b>default value "a csrf secret key"</b>
+DATA_DIRECTORY: MP3 download destination directory if no value are set, the data will be put in <i>[the music_flask project's directory/data]</i>, <b>default value False</b>
 
 ### Informations
 

@@ -36,7 +36,8 @@ setup(name='music_flask',
           'youtube_dl >= 2018.4.16',
           'Flask >= 0.12.2',
           'wtforms >= 2.1',
-          'Flask-WTF >= 0.14.2'
+          'Flask-WTF >= 0.14.2',
+          'pyOpenSSL >= 17.5.0'
       ],
       classifiers=[
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

@@ -71,7 +71,7 @@ class Core():
         self.__code = signum
         self.__interrupt = frame
         print("Execution interrupted by pressing [CTRL+C]")
-        # Do something
+        del self.__flask_app
         exit(0)
 
     def my_hook(self, _d):
@@ -157,7 +157,7 @@ class Core():
                 if not filename.endswith('.mp3'):
                     continue
                 mp3.append(filename)
-        return files
+        return mp3
 
     def get_datadir(self):
         ''' Wiiz '''

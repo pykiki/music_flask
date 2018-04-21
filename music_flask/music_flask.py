@@ -45,59 +45,100 @@ PYTHON3 = sys.version_info.major == 3
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
 
-# Instanciate flask
-APP = Flask(__name__)
-
-# Protect flask app with CSRF giving secret keys
-APP_CSRF = CSRFProtect(APP)
-APP.config.update(dict(
-    SECRET_KEY="powerful secretkey",
-    WTF_CSRF_SECRET_KEY="a csrf secret key"
-))
-
-# Load music_flask core tools
-MUSIC_CORE = Core(app=APP, data_dir=False)
-
-@APP.route('/', methods=['GET', 'POST'])
-def main_page():
-    """
-      This, serves the main page
-    """
-    if request.method == 'POST':
-        form = RequiredField()
-        if form.validate_on_submit():
-            #urls = []
-            #urls.append(request.form['URL'])
-            urls = request.form['URL'].split(' ')
-            return MUSIC_CORE.youtube_download(urls=urls)
-
-        flash('Please fill the URL before submitting', 'warning')
-        return redirect(url_for('main_page'))
-
-    if request.method == 'GET':
-        return MUSIC_CORE.show_main_page()
-
-    return MUSIC_CORE.show_main_page()
-
-@APP.route('/music')
-def list_music():
-    """
-    wizz
-    """
-
-    musics = MUSIC_CORE.list_mp3()
-    return render_template('music.html', musics=musics, pagename='musics')
-
-@APP.route('/music/<path:filename>', methods=['GET', 'POST'])
-def download_file(filename):
-    """
-    wiiiz
-    """
-    # ici changer l'appel a data dir pour creer une func dans la class qui retourne sa valeur
-    response = send_from_directory(directory=MUSIC_CORE.data_dir, filename=filename)
-    response.headers['Content-Disposition'] = 'attachment;filename="{}"'.format(filename)
-    response.headers['Content-Type'] = 'audio/mpeg'
-    return response
+TLS = False
+TLS_CERTIFICATE = ''
+TLS_KEY = ''
+PORT = 1080
+LISTEN = "0.0.0.0"
+DEBUG = False
+CSRF_KEY = "powerful secretkey"
+CSRF_FORM_TOKEN = "a csrf secret key"
+DATA_DIRECTORY = False
 
 if __name__ == '__main__':
-    APP.run(debug=False, host='0.0.0.0', port=1080)
+    # Instanciate flask
+    APP = Flask(__name__)
+
+    # Protect flask app with CSRF giving secret keys
+    APP_CSRF = CSRFProtect(APP)
+    APP.config.update(dict(
+        SECRET_KEY=CSRF_KEY,
+        WTF_CSRF_SECRET_KEY=CSRF_FORM_TOKEN
+    ))
+
+    # Load music_flask core tools
+    MUSIC_CORE = Core(app=APP, data_dir=DATA_DIRECTORY)
+
+    @APP.route('/', methods=['GET', 'POST'])
+    def main_page():
+        """
+          This, serves the main page
+        """
+        if request.method == 'POST':
+            form = RequiredField()
+            if form.validate_on_submit():
+                urls = request.form['URL'].split(' ')
+                return MUSIC_CORE.youtube_download(urls=urls)
+
+            flash('Please fill the URL before submitting', 'warning')
+            return redirect(url_for('main_page'))
+
+        if request.method == 'GET':
+            return MUSIC_CORE.show_main_page()
+
+        return MUSIC_CORE.show_main_page()
+
+    @APP.route('/music')
+    def list_music():
+        """
+        wizz
+        """
+
+        musics = MUSIC_CORE.list_mp3()
+        return render_template('music.html', musics=musics, pagename='musics')
+
+    @APP.route('/music/<path:filename>', methods=['GET', 'POST'])
+    def download_file(filename):
+        """
+        wiiiz
+        """
+        # ici changer l'appel a data dir pour creer une func dans la class qui retourne sa valeur
+        response = send_from_directory(directory=MUSIC_CORE.data_dir, filename=filename)
+        response.headers['Content-Disposition'] = 'attachment;filename="{}"'.format(filename)
+        response.headers['Content-Type'] = 'audio/mpeg'
+        return response
+
+    if not TLS:
+        APP.run(debug=DEBUG, host=LISTEN, port=PORT)
+    else:
+        if not TLS_CERTIFICATE and not TLS_KEY:
+            APP.run(debug=DEBUG, host=LISTEN, port=PORT, ssl_context='adhoc')
+        else:
+            if not TLS_CERTIFICATE:
+                print('Missing TLS certificate file path')
+                del MUSIC_CORE
+                del APP
+                exit(1)
+            if not TLS_KEY:
+                print('Missing TLS private key path')
+                del MUSIC_CORE
+                del APP
+                exit(1)
+
+            if not os.path.isfile(TLS_CERTIFICATE):
+                print('Unable to find certificate file {}'.format(TLS_CERTIFICATE))
+                del MUSIC_CORE
+                del APP
+                exit(1)
+
+            if not os.path.isfile(TLS_KEY):
+                print('Unable to find private key file {}'.format(TLS_KEY))
+                del MUSIC_CORE
+                del APP
+                exit(1)
+
+            APP.run(debug=DEBUG, host=LISTEN, port=PORT, ssl_context=(TLS_CERTIFICATE, TLS_KEY))
+
+    del MUSIC_CORE
+    del APP
+    exit(0)
