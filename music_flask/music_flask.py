@@ -24,6 +24,7 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 import youtube_dl
 from flask import Flask
 from flask import request
@@ -38,6 +39,11 @@ from forms import RequiredField
 
 __author__ = "Alain Maibach"
 __status__ = "Developement"
+
+PYTHON3 = sys.version_info.major == 3
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
 
 class MyLogger(object):
     """
@@ -83,12 +89,15 @@ def show_main_page():
     """
     return render_template('main.html', pagename='download')
 
-def youtube_download(urls):
+def youtube_download(urls, destination=False):
     """
       This function will handles authentication mecanisme
     """
 
-    data_dir = os.path.join(APP.root_path, 'data')
+    if not destination:
+        data_dir = os.path.join(APP.root_path, 'data')
+    else:
+        data_dir = str(destination)
     ydl_opts = {
         'format': 'bestaudio/best',
         'geo-bypass': True,
@@ -159,7 +168,7 @@ def main_page():
             #urls = []
             #urls.append(request.form['URL'])
             urls = request.form['URL'].split(' ')
-            return youtube_download(urls)
+            return youtube_download(urls=urls)
 
         flash('Please fill the URL before submitting', 'warning')
         return redirect(url_for('main_page'))
@@ -170,7 +179,7 @@ def main_page():
     return show_main_page()
 
 @APP.route('/music')
-def list_music():
+def list_music(destination=False):
     """
     wizz
     """
@@ -178,7 +187,10 @@ def list_music():
     musics = []
     directories = []
     main_paths = []
-    data_dir = os.path.join(APP.root_path, 'data')
+    if not destination:
+        data_dir = os.path.join(APP.root_path, 'data')
+    else:
+        data_dir = str(destination)
 
     for root, dirs, files in os.walk(data_dir):
         main_paths.append(root)
@@ -201,4 +213,4 @@ def download_file(filename):
     return response
 
 if __name__ == '__main__':
-    APP.run(debug=True, host='0.0.0.0', port=1080)
+    APP.run(debug=False, host='0.0.0.0', port=1080)
