@@ -4,14 +4,45 @@ set -eu -o pipefail
 # Build music flask docker image
 
 err_report() {
-  if [ ! -z $tmpDir ]; then
-    rm -rf $tmpDir/
+  if [ ${!tmpDir[@]} ] ; then
+    if [ ! -z $tmpDir ]; then
+      rm -rf $tmpDir/
+    fi
   fi
   badimg=$(docker images | grep -Ec '^<none>' ||true)
   if [ $badimg -gt 0 ]; then
     for dimg in $(docker images | grep -E '^<none>' | awk '{print $3}'); do
-      docker rmi $dimg
+      rmdkimg "$dimg"||true
     done
+  fi
+  printf "Cleanly exited\n"
+  exit 1
+}
+
+rmdkimg() {
+  local oldImageID="$1"
+  rmres="$(docker rmi ${oldImageID} 2>&1||true)"
+  if [ $(grep -cFi "Error response from daemon" <<< $rmres ||true) -gt 0 ]; then
+    if [ $(grep -ciE " (image is being used|is using its referenced image)" <<< $rmres ||true) -gt 0 ]; then
+      container="$(grep -Eio "container.*" <<< $rmres | awk '{print $2}')"
+      containername="$(docker container ls -a | grep -F "${container}" | awk '{print $12}')"
+      read -p "Do you want to remove the running container $containername ? [y|n](default [n]): " answer
+      if [ "${answer}" == "y" ]; then
+        if [ ! -z $container ]; then
+          docker stop $container &>/dev/null
+          docker rm $container &>/dev/null
+        else
+          printf "Unable to stop container $container\n"
+          err_report
+        fi
+        printf "\n"
+      else
+        err_report
+      fi
+    else
+      printf "${rmres}\n"
+      err_report
+    fi
   fi
 }
 
@@ -19,14 +50,7 @@ function control_c {
   echo -en "\nWARN: Caught SIGINT; Clean up and Exit \n"
   # Ensure that all docker processes are stopped before removing the image
   sleep 1
-  rm -rf $tmpDir/
-  badimg=$(docker images | grep -Ec '^<none>' ||true)
-  if [ $badimg -gt 0 ]; then
-    for dimg in $(docker images | grep -E '^<none>' | awk '{print $3}'); do
-      docker rmi $dimg
-    done
-  fi
-  exit $?
+  err_report
 }
 
 trap "err_report \"Line number ${LINENO} failed: $BASH_COMMAND.\"" ERR
@@ -41,8 +65,8 @@ imgfound=$(docker images | grep -Ec "^${dockerImgName} [[:space:]].*$" 2>&1 ||tr
 if [ $imgfound -gt 0 ]; then
   oldImageID="$(docker images | grep -i "${dockerImgName}" | awk -F' ' '{print $3}')"
   if [ "$oldImageID" != "" ]; then
-      printf "Cleaning current Docker image: $oldImageID / ${dockerImgName}\n"
-      docker rmi ${oldImageID} 2>&1 > /dev/null
+    printf "Cleaning current Docker image: $oldImageID / ${dockerImgName}\n"
+    rmdkimg "$oldImageID"||true
   fi
 fi
 
@@ -63,7 +87,7 @@ if [ $imgfound -gt 0 ]; then
   badimg=$(docker images | grep -Ec '^<none>' ||true)
   if [ $badimg -gt 0 ]; then
     for dimg in $(docker images | grep -E '^<none>' | awk '{print $3}'); do
-      docker rmi $dimg
+      rmdkimg "$dimg"||true
     done
   fi
   printf "Docker Image ${dockerImgName} successfully built !\n"
