@@ -20,3 +20,47 @@
 
   Contact: alain.maibach@gmail.com / 34 rue appienne, 13480 Calas - FRANCE.
 '''
+
+import os
+import sys
+
+__author__ = "Alain Maibach"
+__status__ = "Developement"
+
+PYTHON3 = sys.version_info.major == 3
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
+
+class MyLogger(object):
+    """
+      Wiiz
+    """
+    def __init__(self):
+        self.__error = 0
+        self.__warning = 0
+        self.__debug = 0
+
+    def debug(self, msg):
+        """
+          Wizz
+        """
+        self.__debug = 1
+        print(msg)
+
+    def warning(self, msg):
+        """
+          Wizz
+        """
+        self.__warning = 1
+        print(msg)
+
+    def error(self, msg):
+        """
+          Wizz
+        """
+        self.__error = 1
+        print(msg)
+
+if __name__ == '__main__':
+    pass
