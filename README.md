@@ -65,8 +65,8 @@ If you want to manage the downloaded files on disk, you can mount the data direc
 with -v option:
 
 ```bash
-$ mkdir ./musics
-$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask -v ./musics:/home/flask/music_flask/data --rm music_flask:latest
+$ mkdir $(pwd)/musics
+$ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask -v $(pwd)/musics:/home/flask/music_flask/data --rm music_flask:latest
 ```
 
 #### Manage it
