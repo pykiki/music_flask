@@ -2,9 +2,9 @@
 
 ### Introduction
 
-<b>"music_flask"</b> WEB application is what you need to make downloading youtube music easier !
+<b>"music_flask"</b> Web application is what you need to make downloading youtube music easier!
 
-Based on the Flask framework, it is entirely developped in Pyhton3.
+Based on the Flask framework, it is entirely developped in Python3.
 
 ### Pre-requisites
 
@@ -84,25 +84,18 @@ $ docker stop music_flask
 
 ### Quickstart
 
-Create a [Python virtual environnement](https://virtualenv.pypa.io/en/stable/ "Python virtualenv") and then install Flask.
+Create a [Python virtual environnement](https://virtualenv.pypa.io/en/stable/ "Python virtualenv")
+
+Install music_flask:
 
 ```bash
-$ pip install Flask wtforms flask_wtf
+$ python3 setup.py install
 ```
 
-Install [youtube_dl](https://github.com/rg3/youtube-dl/blob/master/README.md#readme "Documentation youtube_dl")
-```bash
-mkdir -p $PYTHONPATH/wheel/youtube_dl/
-pushd $PYTHONPATH/wheel/youtube_dl/
-curl -L "https://files.pythonhosted.org/packages/38/98/759cc271d2cda665671a835689b3fb5c5dcd6a3a3cdaf81164dd270cb263/youtube_dl-2018.4.16-py2.py3-none-any.whl" -O
-popd
-pip install youtube_dl
-```
-
-Now run the application
+Now run the application:
 
 ```bash
-$ python3 ./music_flask.py
+$ python3 music_flask/music_flask.py
 ```
 
 ### Informations

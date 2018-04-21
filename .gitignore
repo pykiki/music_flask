@@ -1,2 +1,11 @@
-data/*
+*~
+*.swp
+*.swo
+.directory
 __pycache__/
+*.py[cod]
+*$py.class
+data/*
+build
+*.egg-info
+dist
