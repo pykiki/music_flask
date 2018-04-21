@@ -53,7 +53,9 @@ To start the container, you must run it with user flask:
 $ docker run -p 80:1080 -d --user flask -h musicFlask --name music_flask --rm music_flask:latest
 ```
 
-Please pay attention to the flag <b>--rm</b>
+<aside class="notice">
+  Please pay attention to the flag <b>--rm</b>
+</aside>
 
 To manage it you can:
   - show logs
