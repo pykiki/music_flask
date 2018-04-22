@@ -25,17 +25,18 @@ Based on the Flask framework, it is entirely developped in Python3.
 ### TODO
 
 - Add a cli arguments parser
+- Fill up the logger class
+  - send logs to logfile when downloads fail.
+- Add a API call to [musicbrainz](https://musicbrainz.org/) to retrieve tag informations and music names + update file with it.
+- Find a way to add a progress-bar
+  - Add youtube-dl progession informations too
+  - Improve and add more flash information
 - Improve music files list design
   - Add audio balise to stream online
   - Add a way to delete musics
-- Improve and add more flash information
-- Find a way to add a progress-bar
-- Add youtube-dl progession informations too
-- Add a database simplistic system to store URL:file_name downloaded
-- Avoid downloading of a previously downloaded file still present in 'data'
-- Add a API call to [musicbrainz](https://musicbrainz.org/) to retrieve tag informations and music names + update file with it.
+- Add a database simplistic system to store URL:file_name downloaded (use youtube ID as 'uniq' info)
+  - Avoid downloading of a previously downloaded file still present in 'data'
 - Change download mechanism to be able to download in a async manner.[async-io](https://docs.python.org/3/library/asyncio.html)
-- Fill up the logger class
 - Add a check for the local disk available space before download. Print a warning icon when disk space is low.
 
 ### Docker
