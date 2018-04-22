@@ -82,15 +82,40 @@ class Core():
         """
 
         page_name = self.__main_page_name
+        print(page_name)
 
         if _d['status'] == 'finished':
-            print('Downloding done from {}, now converting ...'.format(page_name))
+            file_tuple = os.path.split(os.path.abspath(_d['filename']))
+            file_name = file_tuple[1]
+            print('{} downloaded, now converting ...'.format(file_name))
+
+        if _d['status'] == 'downloading':
+            file_tuple = os.path.split(os.path.abspath(_d['filename']))
+            file_name = file_tuple[1]
+            print("{} {} {}".format(_d['filename'], _d['_percent_str'], _d['_eta_str']))
 
     def show_main_page(self):
         """
           This function render the main page after a sucessfull log in.
         """
-        return render_template(self.__main_html_file, pagename=self.__main_page_name, app_version=self.__app_version)
+        return render_template(self.__main_html_file,
+                               pagename=self.__main_page_name,
+                               app_version=self.__app_version
+                              )
+
+    def url_get_infos(self, url):
+        """ Wiiiiz """
+        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(title)s.%(ext)s',
+                                    'noplaylist': True,
+                                    'no_color': True
+                                   }
+                                  )
+        infos = None
+        try:
+            infos = ydl.extract_info(url, process=False, download=False)
+        except Exception as err:
+            print(err)
+        return infos
 
     def youtube_download(self, urls):
         """
@@ -123,29 +148,46 @@ class Core():
             'outtmpl': '{}/%(title)s.%(ext)s'.format(self.__data_dir)
         }
 
+        not_found = []
+        infos = []
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            #for url in urls:
-            #    try:
-            #        ydl.download([url])
-            try:
-                ydl.download(urls)
-            except youtube_dl.DownloadError as err:
-                flash('Failed to download: {}'.format(str(err)), 'error')
-                return redirect(url_for('main_page'))
-            except youtube_dl.SameFileError as err:
-                flash('Same file already downloaded: {}'.format(str(err)), 'error')
-                return redirect(url_for('main_page'))
-            except youtube_dl.utils.ExtractorError as err:
-                flash('Extracting error: {}'.format(str(err)), 'error')
-                return redirect(url_for('main_page'))
-            except youtube_dl.utils.UnavailableVideoError as err:
-                flash('Video not available on requested url: {}'.format(str(err)), 'error')
-                return redirect(url_for('main_page'))
+            for url in urls:
+                info = self.url_get_infos(url=url)
+                if not info:
+                    urls.remove(url)
+                    not_found.append(url)
+                    continue
 
-        str_urls = "\n".join(urls)
-        flash(r'{} Downloaded'.format(str_urls), 'info')
+                try:
+                    ydl.download([url])
+                except youtube_dl.DownloadError as err:
+                    flash('Failed to download: {}'.format(str(err)), 'error')
+                    return redirect(url_for('main_page'))
+                except youtube_dl.SameFileError as err:
+                    flash('Same file already downloaded: {}'.format(str(err)), 'error')
+                    return redirect(url_for('main_page'))
+                except youtube_dl.utils.ExtractorError as err:
+                    flash('Extracting error: {}'.format(str(err)), 'error')
+                    return redirect(url_for('main_page'))
+                except youtube_dl.utils.UnavailableVideoError as err:
+                    flash('Video not available on requested url: {}'.format(str(err)), 'error')
+                    return redirect(url_for('main_page'))
+
+                flash('The music {} with a Youtube ID {} has been downloaded..'.
+                      format(info['title'],
+                             info['id']
+                            ),
+                      'info'
+                     )
+
+        if not_found:
+            for url_err in not_found:
+                flash("{} has not been found on Youtube\n".
+                      format(url_err),
+                      'error'
+                     )
+
         return redirect(url_for('list_music'))
-
 
     def list_mp3(self):
         ''' Wiiz '''

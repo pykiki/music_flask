@@ -78,6 +78,7 @@ if __name__ == '__main__':
             form = RequiredField()
             if form.validate_on_submit():
                 urls = request.form['URL'].split(' ')
+
                 return MUSIC_CORE.youtube_download(urls=urls)
 
             flash('Please fill the URL before submitting', 'warning')
@@ -95,14 +96,17 @@ if __name__ == '__main__':
         """
 
         musics = MUSIC_CORE.list_mp3()
-        return render_template('music.html', musics=musics, pagename='musics', app_version=MUSIC_CORE.app_version)
+        return render_template('music.html',
+                               musics=musics,
+                               pagename='musics',
+                               app_version=MUSIC_CORE.app_version
+                              )
 
     @APP.route('/music/<path:filename>', methods=['GET', 'POST'])
     def download_file(filename):
         """
         wiiiz
         """
-        # ici changer l'appel a data dir pour creer une func dans la class qui retourne sa valeur
         response = send_from_directory(directory=MUSIC_CORE.data_dir, filename=filename)
         response.headers['Content-Disposition'] = 'attachment;filename="{}"'.format(filename)
         response.headers['Content-Type'] = 'audio/mpeg'
