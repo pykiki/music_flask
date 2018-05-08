@@ -127,20 +127,14 @@ class Core(object):
 
         ydl_opts = {
             'format': 'bestaudio/best',
-            'geo-bypass': True,
             'noplaylist': True,
-            'restrict-filenames': True,
-            'retries': 10,
-            'fragment-retries': 10,
-            'continue': True,
-            'no-overwrites': True,
-            'no-part': True,
-            'no-cache-dir': True,
-            'rm-cache-dir': True,
-            'add-metadata': True,
-            'embed-thumbnail': True,
-            'user-agent': '''Mozilla/5.0 (Windows NT 10.0; WOW64)
-             AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36''',
+            'restrictfilenames': unix_friendly_names,
+            'nooverwrites': True,
+            'nopart': True,
+            'cachedir': False,
+            'geo_bypass': True,
+            'writethumbnail': True,
+            'writeinfojson': True,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -148,7 +142,9 @@ class Core(object):
             }],
             'logger': MyLogger(),
             'progress_hooks': [self.my_hook],
-            'outtmpl': '{}/%(title)s.%(ext)s'.format(self.__data_dir)
+            'outtmpl': '{}/%(title)s.%(ext)s'.format(self.__data_dir),
+            'continuedl': True,
+            'retries': 10
         }
 
         not_found = []
