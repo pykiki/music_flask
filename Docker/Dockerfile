@@ -35,6 +35,7 @@ WORKDIR /home/flask/music_flask/
 RUN python3 setup.py install
 
 RUN apk del .build-deps
+RUN chmod 4555 /bin/ping
 
 STOPSIGNAL SIGTERM
 
