@@ -42,7 +42,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_NAME = os.path.splitext(os.path.basename(__file__))[0]
 APP_VERSION = 'v1.1.2'
 
-class Core():
+class Core(object):
     ''' Core class which contains music_flask engine functions '''
 
     def __init__(self, app, data_dir=False):
@@ -57,6 +57,9 @@ class Core():
         self.__main_page_name = 'download'
         self.__main_html_file = 'main.html'
         self.__app_version = APP_VERSION
+        self.__iserr = False
+        self.__dl_fired = False
+        self.__dl_progress = 0
 
         self.__code = False
         self.__interrupt = False
@@ -76,7 +79,7 @@ class Core():
         del self.__flask_app
         exit(0)
 
-    def my_hook(self, _d):
+    def my_hook(self, data):
         """
           Wizz
         """
@@ -84,15 +87,16 @@ class Core():
         page_name = self.__main_page_name
         print(page_name)
 
-        if _d['status'] == 'finished':
-            file_tuple = os.path.split(os.path.abspath(_d['filename']))
+        if data['status'] == 'finished':
+            file_tuple = os.path.split(os.path.abspath(data['filename']))
             file_name = file_tuple[1]
             print('{} downloaded, now converting ...'.format(file_name))
+            self.__dl_progress = 100
 
-        if _d['status'] == 'downloading':
-            file_tuple = os.path.split(os.path.abspath(_d['filename']))
+        if data['status'] == 'downloading':
+            file_tuple = os.path.split(os.path.abspath(data['filename']))
             file_name = file_tuple[1]
-            print("{} {} {}".format(_d['filename'], _d['_percent_str'], _d['_eta_str']))
+            print("{} {} {}".format(data['filename'], data['_percent_str'], data['_eta_str']))
 
     def show_main_page(self):
         """
@@ -103,18 +107,17 @@ class Core():
                                app_version=self.__app_version
                               )
 
-    def url_get_infos(self, url):
+    def url_get_infos(self, url, youtube_opts):
         """ Wiiiiz """
-        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(title)s.%(ext)s',
-                                    'noplaylist': True,
-                                    'no_color': True
-                                   }
-                                  )
+        ydl = youtube_dl.YoutubeDL(youtube_opts)
         infos = None
         try:
             infos = ydl.extract_info(url, process=False, download=False)
-        except Exception as err:
+        except youtube_dl.utils.UnavailableVideoError as err:
+            self.__iserr = True
             print(err)
+            return False
+
         return infos
 
     def youtube_download(self, urls):
@@ -125,7 +128,7 @@ class Core():
         ydl_opts = {
             'format': 'bestaudio/best',
             'geo-bypass': True,
-            'no-playlist': True,
+            'noplaylist': True,
             'restrict-filenames': True,
             'retries': 10,
             'fragment-retries': 10,
@@ -149,15 +152,16 @@ class Core():
         }
 
         not_found = []
-        infos = []
+        self.__dl_fired = True
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             for url in urls:
-                info = self.url_get_infos(url=url)
+                info = self.url_get_infos(url=url, youtube_opts=ydl_opts)
                 if not info:
                     urls.remove(url)
                     not_found.append(url)
                     continue
 
+                self.__dl_progress = 0
                 try:
                     ydl.download([url])
                 except youtube_dl.DownloadError as err:
@@ -187,6 +191,7 @@ class Core():
                       'error'
                      )
 
+        self.__dl_fired = False
         return redirect(url_for('list_music'))
 
     def list_mp3(self):
@@ -211,8 +216,18 @@ class Core():
         ''' Wiiz '''
         return self.__app_version
 
+    def get_progress(self):
+        ''' Wiiz '''
+        return self.__dl_progress
+
+    def get_fired(self):
+        ''' Wiiz '''
+        return self.__dl_fired
+
     data_dir = property(get_datadir, None, None, "Return the data directory path")
     app_version = property(get_app_version, None, None, "Return the application version")
+    dl_progress = property(get_progress, None, None, "Return the download progression value")
+    dl_fired = property(get_fired, None, None, "Return the download starting status")
 
 if __name__ == '__main__':
     pass

@@ -32,6 +32,7 @@ from flask import send_from_directory
 from flask import url_for
 from flask import redirect
 from flask import flash
+#from flask import Response
 from flask_wtf.csrf import CSRFProtect
 
 from forms import RequiredField
@@ -96,6 +97,18 @@ if __name__ == '__main__':
             return MUSIC_CORE.show_main_page()
 
         return MUSIC_CORE.show_main_page()
+
+    #@APP.route('/progress')
+    #def progress():
+    #    """ wiiiz """
+    #    def generate():
+    #        """ wiiiz """
+    #        p_val = 0
+    #        while p_val <= 100:
+    #            yield "data:" + str(p_val) + "\n\n"
+    #            p_val = p_val + 1
+
+    #    return Response(generate(), mimetype='text/event-stream')
 
     @APP.route('/music')
     def list_music():
