@@ -35,6 +35,9 @@ from flask import flash
 from flask_wtf.csrf import CSRFProtect
 
 from forms import RequiredField
+
+import urllib.parse
+
 from __core__ import Core
 
 __author__ = "Alain Maibach"
@@ -79,7 +82,12 @@ if __name__ == '__main__':
             if form.validate_on_submit():
                 urls = request.form['URL'].split(' ')
 
-                return MUSIC_CORE.youtube_download(urls=urls)
+                encoded_urls = []
+                for url in urls:
+                    encoded_url = urllib.parse.quote(url)
+                    encoded_urls.append(encoded_url)
+
+                return MUSIC_CORE.youtube_download(urls=encoded_urls)
 
             flash('Please fill the URL before submitting', 'warning')
             return redirect(url_for('main_page'))
