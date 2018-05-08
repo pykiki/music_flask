@@ -128,7 +128,7 @@ class Core(object):
         ydl_opts = {
             'format': 'bestaudio/best',
             'noplaylist': True,
-            'restrictfilenames': unix_friendly_names,
+            'restrictfilenames': True,
             'nooverwrites': True,
             'nopart': True,
             'cachedir': False,
