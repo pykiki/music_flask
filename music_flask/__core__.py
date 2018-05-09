@@ -133,8 +133,8 @@ class Core(object):
             'nopart': True,
             'cachedir': False,
             'geo_bypass': True,
-            'writethumbnail': True,
-            'writeinfojson': True,
+            'writethumbnail': False,
+            'writeinfojson': False,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
