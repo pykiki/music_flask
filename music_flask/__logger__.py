@@ -37,30 +37,27 @@ class MyLogger(object):
       Wiiz
     """
     def __init__(self):
-        self.__error = 0
-        self.__warning = 0
-        self.__debug = 0
+        self.__error = ""
+        self.__warning = ""
+        self.__debug = ""
 
     def debug(self, msg):
         """
           Wizz
         """
-        self.__debug = 1
-        print(msg)
+        self.__debug = msg
 
     def warning(self, msg):
         """
           Wizz
         """
-        self.__warning = 1
-        print(msg)
+        self.__warning = msg
 
     def error(self, msg):
         """
           Wizz
         """
-        self.__error = 1
-        print(msg)
+        self.__error = msg
 
 if __name__ == '__main__':
     pass

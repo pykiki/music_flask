@@ -26,12 +26,14 @@ from __future__ import unicode_literals
 import os
 import sys
 import signal
+import time
 import youtube_dl
 from flask import render_template
 from flask import flash
 from flask import url_for
 from flask import redirect
 from __logger__ import MyLogger
+import __chk_disk__
 
 __author__ = "Alain Maibach"
 __status__ = "Developement"
@@ -58,8 +60,9 @@ class Core(object):
         self.__main_html_file = 'main.html'
         self.__app_version = APP_VERSION
         self.__iserr = False
-        self.__dl_fired = False
-        self.__dl_progress = 0
+
+        self.__t_zero = time.process_time()
+        self.__progress_percent = 0
 
         self.__code = False
         self.__interrupt = False
@@ -84,19 +87,30 @@ class Core(object):
           Wizz
         """
 
-        page_name = self.__main_page_name
-        print(page_name)
-
         if data['status'] == 'finished':
             file_tuple = os.path.split(os.path.abspath(data['filename']))
             file_name = file_tuple[1]
-            print('{} downloaded, now converting ...'.format(file_name))
-            self.__dl_progress = 100
+            #elapsed_time = time.perf_counter() - self.__t_zero
+            self.__progress_percent = 100
 
         if data['status'] == 'downloading':
-            file_tuple = os.path.split(os.path.abspath(data['filename']))
-            file_name = file_tuple[1]
-            print("{} {} {}".format(data['filename'], data['_percent_str'], data['_eta_str']))
+            if data['downloaded_bytes'] == 0:
+                # Initial call to print 0% progress
+                self.__progress_percent = 0
+            else:
+                file_tuple = os.path.split(os.path.abspath(data['filename']))
+                file_dir = file_tuple[0]
+                file_name = file_tuple[1]
+                free_space = __chk_disk__.path_freespace(file_dir)
+                if 'total_bytes_estimate' in data and data['total_bytes_estimate']:
+                    if data['total_bytes_estimate'] > free_space['bytes']:
+                        raise ValueError(
+                            'Failed to download file {}, no space left on disk.'.format(file_name)
+                            )
+
+                if data['total_bytes']:
+                    self.__progress_percent = 100 * data['downloaded_bytes'] / data['total_bytes']
+        #return self.__progress_percent
 
     def show_main_page(self):
         """
@@ -117,6 +131,18 @@ class Core(object):
             self.__iserr = True
             print(err)
             return False
+        except youtube_dl.DownloadError as err:
+            self.__iserr = True
+            print(err)
+            return False
+        except youtube_dl.SameFileError as err:
+            self.__iserr = True
+            print(err)
+            return False
+        except youtube_dl.utils.ExtractorError as err:
+            self.__iserr = True
+            print(err)
+            return False
 
         return infos
 
@@ -125,10 +151,12 @@ class Core(object):
           This function will handles authentication mecanisme
         """
 
+        unix_friendly_names = True
+
         ydl_opts = {
             'format': 'bestaudio/best',
             'noplaylist': True,
-            'restrictfilenames': True,
+            'restrictfilenames': unix_friendly_names,
             'nooverwrites': True,
             'nopart': True,
             'cachedir': False,
@@ -148,7 +176,6 @@ class Core(object):
         }
 
         not_found = []
-        self.__dl_fired = True
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             for url in urls:
                 info = self.url_get_infos(url=url, youtube_opts=ydl_opts)
@@ -157,8 +184,9 @@ class Core(object):
                     not_found.append(url)
                     continue
 
-                self.__dl_progress = 0
                 try:
+                    self.__progress_percent = 0
+                    self.__t_zero = time.perf_counter()
                     ydl.download([url])
                 except youtube_dl.DownloadError as err:
                     flash('Failed to download: {}'.format(str(err)), 'error')
@@ -187,7 +215,6 @@ class Core(object):
                       'error'
                      )
 
-        self.__dl_fired = False
         return redirect(url_for('list_music'))
 
     def list_mp3(self):
@@ -212,18 +239,13 @@ class Core(object):
         ''' Wiiz '''
         return self.__app_version
 
-    def get_progress(self):
+    def get_dl_progress(self):
         ''' Wiiz '''
-        return self.__dl_progress
-
-    def get_fired(self):
-        ''' Wiiz '''
-        return self.__dl_fired
+        return self.__progress_percent
 
     data_dir = property(get_datadir, None, None, "Return the data directory path")
     app_version = property(get_app_version, None, None, "Return the application version")
-    dl_progress = property(get_progress, None, None, "Return the download progression value")
-    dl_fired = property(get_fired, None, None, "Return the download starting status")
+    progress_percent = property(get_dl_progress, None, None, "Return the progress percentil value")
 
 if __name__ == '__main__':
     pass
