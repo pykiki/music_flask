@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  dhcpd:
+    build: .
+    image: my-alpine/music_flask:latest
+    container_name: music_flask
+    hostname: musicFlask
+    user: flask
+    expose:
+      - 1080/tcp
+    ports:
+     - "1080/tcp"
+    volumes:
+      - /opt/music_flask/data:/home/flask/music_flask/music_flask/data:rw
+    restart: unless-stopped
